@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Internal Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #EF8B22;
+    --orange-soft: #FFF1DF;
+    --orange-deep: #B45309;
+    --gray: #53575A;
+    --gray-dim: #7B7F82;
+    --gray-line: #E5E5E7;
+    --gray-bg: #F7F7F8;
+    --blue: #0979C3;
+    --blue-soft: #E6F2FA;
+    --green: #2E7D32;
+    --green-soft: #E8F5E9;
+    --red: #C62828;
+    --red-soft: #FDECEA;
+    --ink: #1F2326;
+    --white: #FFFFFF;
+    --radius: 10px;
+    --radius-lg: 14px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--gray-bg);
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  /* Header */
+  header.top { margin-bottom: 24px; }
+  .eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  h1 { font-size: 30px; font-weight: 900; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .lede { font-size: 15.5px; color: var(--gray); margin: 0 0 0 0; max-width: 760px; }
+
+  /* Cycle state panel */
+  .cycle-state {
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-left: 4px solid var(--orange);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    margin: 22px 0 28px;
+    box-shadow: var(--shadow-sm);
+  }
+  .cycle-state h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-dim);
+    margin: 0 0 12px;
+    font-weight: 700;
+  }
+  .cycle-input-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; }
+  .cycle-input-row label {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 12px; color: var(--gray-dim); font-weight: 500;
+  }
+  .cycle-input-row input[type="date"], .cycle-input-row input[type="text"] {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--gray-line);
+    border-radius: 8px;
+    background: var(--white);
+  }
+  .cycle-input-row input[type="date"]:focus,
+  .cycle-input-row input[type="text"]:focus { outline: 2px solid var(--orange); outline-offset: 1px; }
+  .btn {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: var(--blue);
+    color: var(--white);
+  }
+  .btn:hover { filter: brightness(1.05); }
+  .btn.ghost { background: transparent; color: var(--gray); border-color: var(--gray-line); }
+  .btn.danger { background: var(--white); color: var(--red); border-color: var(--red); }
+  .btn.danger:hover { background: var(--red-soft); }
+  .progress-summary {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-line);
+    display: flex; flex-wrap: wrap; gap: 18px; align-items: center;
+    font-size: 13px;
+  }
+  .progress-bar-shell { flex: 1; min-width: 200px; height: 8px; background: var(--gray-line); border-radius: 999px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--orange); width: 0%; transition: width 0.3s ease; }
+  .progress-text { font-weight: 700; color: var(--gray); white-space: nowrap; }
+
+  /* Pill nav */
+  nav.toc {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--gray-bg);
+    padding: 10px 0 12px;
+    margin: 0 -24px 24px;
+    padding-left: 24px; padding-right: 24px;
+    border-bottom: 1px solid var(--gray-line);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  nav.toc a {
+    display: inline-block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gray);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-right: 6px;
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+  }
+  nav.toc a:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* Section */
+  section { margin-bottom: 36px; scroll-margin-top: 72px; }
+  h2 {
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--orange);
+    display: inline-block;
+  }
+  h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; }
+  p { margin: 0 0 12px; }
+  p.sub { color: var(--gray); margin-bottom: 18px; max-width: 760px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  /* Trigger card */
+  .triggers { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0 18px; }
+  .trigger-card {
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .trigger-card h4 { font-size: 13.5px; margin: 0 0 6px; color: var(--orange-deep); }
+  .trigger-card p { font-size: 13px; color: var(--gray); margin: 0; }
+  @media (max-width: 720px) { .triggers { grid-template-columns: 1fr; } }
+
+  /* Phase card */
+  .phase {
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: var(--radius-lg);
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .phase-head {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 18px 20px;
+    cursor: pointer;
+    background: var(--white);
+    border: none;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+  }
+  .phase-head:hover { background: #FAFAFB; }
+  .phase-num {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--orange-soft);
+    color: var(--orange-deep);
+    font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .phase-meta { flex: 1; min-width: 0; }
+  .phase-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .phase-detail-row {
+    display: flex; flex-wrap: wrap; gap: 6px 12px;
+    font-size: 12px; color: var(--gray-dim);
+    align-items: center;
+  }
+  .owner-chip {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--blue-soft);
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .timing-chip {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--gray-bg);
+    color: var(--gray);
+    border: 1px solid var(--gray-line);
+  }
+  .computed-date {
+    color: var(--orange-deep);
+    font-weight: 700;
+    font-size: 11.5px;
+  }
+  .phase-progress {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--gray-dim);
+    font-weight: 700;
+    min-width: 48px;
+    text-align: right;
+  }
+  .phase-toggle {
+    flex-shrink: 0;
+    color: var(--gray-dim);
+    font-weight: 700;
+    transition: transform 0.2s ease;
+  }
+  .phase[open] .phase-toggle { transform: rotate(180deg); }
+
+  .phase-body {
+    padding: 4px 20px 20px 66px;
+    display: none;
+    border-top: 1px solid var(--gray-line);
+    margin-top: 0;
+  }
+  .phase[open] .phase-body { display: block; }
+  .phase-body p:first-child { margin-top: 14px; }
+
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; margin: 8px 0 12px; }
+  .checklist li {
+    padding: 8px 10px 8px 0;
+    margin-bottom: 2px;
+    border-radius: 6px;
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 14px;
+  }
+  .checklist li:hover { background: #FAFAFB; }
+  .checklist input[type="checkbox"] {
+    margin-top: 3px;
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: var(--orange);
+  }
+  .checklist label { cursor: pointer; flex: 1; }
+  .checklist li.done label { color: var(--gray-dim); text-decoration: line-through; text-decoration-color: var(--gray-line); }
+
+  /* Pitfall callout */
+  .pitfall {
+    background: var(--red-soft);
+    border-left: 3px solid var(--red);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    margin: 10px 0;
+  }
+  .pitfall b { color: var(--red); }
+  .nudge {
+    background: var(--blue-soft);
+    border-left: 3px solid var(--blue);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    margin: 10px 0;
+  }
+
+  /* Roles table */
+  .roles-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 12px;
+    font-size: 13.5px;
+  }
+  .roles-table th {
+    background: var(--gray-bg);
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 700;
+    color: var(--gray);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--gray-line);
+  }
+  .roles-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--gray-line);
+    vertical-align: top;
+  }
+  .roles-table tr:last-child td { border-bottom: none; }
+  .roles-table .role { font-weight: 700; color: var(--orange-deep); white-space: nowrap; }
+
+  /* Artifacts */
+  .artifacts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .artifact-card {
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .artifact-card h4 { font-size: 13.5px; margin: 0 0 4px; }
+  .artifact-card p { font-size: 12.5px; color: var(--gray); margin: 0 0 6px; }
+  .artifact-card code {
+    font-size: 11px;
+    background: var(--gray-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--gray);
+    word-break: break-all;
+  }
+  .artifact-card a { color: var(--blue); text-decoration: none; font-size: 12.5px; font-weight: 700; }
+  .artifact-card a:hover { text-decoration: underline; }
+
+  /* Lessons learned */
+  .lesson {
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .lesson h4 { font-size: 14px; margin: 0 0 6px; color: var(--orange-deep); }
+  .lesson p { font-size: 13.5px; margin: 0; color: var(--gray); }
+
+  footer.bottom {
+    margin-top: 50px;
+    padding-top: 22px;
+    border-top: 1px solid var(--gray-line);
+    font-size: 12px;
+    color: var(--gray-dim);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="eyebrow">Compensation · Process Reference</div>
+  <h1>Mover Comp Rollout Playbook</h1>
+  <p class="lede">Run a mover comp cycle end-to-end. The philosophy doc tells you <i>why</i>. The modeler tells you <i>what</i>. This tells you <i>how</i> — phase sequencing, owners, timing, and the pitfalls we hit last time.</p>
+</header>
+
+<!-- ===== CYCLE STATE PANEL ===== -->
+<div class="cycle-state">
+  <h3>Cycle State</h3>
+  <div class="cycle-input-row">
+    <label>Target effective date (Saturday)
+      <input type="date" id="effDate">
+    </label>
+    <label>Cycle label
+      <input type="text" id="cycleLabel" placeholder="e.g. Mover Comp May 2027" style="width: 240px;">
+    </label>
+    <button class="btn" id="saveCycle">Save / Update</button>
+    <button class="btn ghost" id="resetCycle">Reset Checklist</button>
+  </div>
+  <div class="progress-summary">
+    <span class="progress-text" id="progressText">0 / 0 tasks complete</span>
+    <div class="progress-bar-shell"><div class="progress-bar-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<!-- ===== NAV ===== -->
+<nav class="toc">
+  <a href="#when">When to Run</a>
+  <a href="#phases">The 6 Phases</a>
+  <a href="#roles">Roles</a>
+  <a href="#pitfalls">Pitfalls</a>
+  <a href="#artifacts">Artifacts</a>
+  <a href="#open">Open Questions</a>
+</nav>
+
+<!-- ===== SECTION 1: WHEN TO RUN ===== -->
+<section id="when">
+  <h2>When to run a cycle</h2>
+  <p class="sub">Default cadence is annual (May), per the philosophy doc. Don't run more often than that without a real trigger — restlessness isn't a reason.</p>
+
+  <h3>Standing rhythm</h3>
+  <ul>
+    <li><b>Annual mover comp review</b> — kicks off mid-April, lands first Saturday of May or first Saturday after Roundtable alignment.</li>
+    <li><b>Quarterly manager comp review</b> — separate cycle, runs alongside QGR.</li>
+    <li><b>Variable pay calibration</b> — quarterly, owned by Matisen (performance matrix in EMMA).</li>
+  </ul>
+
+  <h3>Mid-cycle triggers (when to run early)</h3>
+  <div class="triggers">
+    <div class="trigger-card">
+      <h4>Cost-of-labor drift</h4>
+      <p>BMs report multiple candidates walking at current rates. ClearCo applicant flow drops materially while retention holds. Competitor rates surface in screens.</p>
+    </div>
+    <div class="trigger-card">
+      <h4>Retention red flag</h4>
+      <p>Lead-tier voluntary turnover spikes in a region. eNPS pay-themed comments cluster. A specific mover everyone wanted to keep walks for $1/hr.</p>
+    </div>
+    <div class="trigger-card">
+      <h4>Margin headroom unlocks</h4>
+      <p>Variable pricing pulls revenue meaningfully above forecast. AGM % of revenue gives 2-3 percentage points of comp-to-AGM headroom that wasn't there at last review.</p>
+    </div>
+    <div class="trigger-card">
+      <h4>Structural change</h4>
+      <p>New role added (e.g. Part-Time Lead). Position retired (e.g. Hall of Fame as pay band). Tiered markets opened (e.g. Houston/SA below ATX/DFW).</p>
+    </div>
+  </div>
+
+  <h3>Pre-flight check (do these <i>before</i> announcing a cycle)</h3>
+  <ol>
+    <li>Re-read the Compensation Philosophy doc. Has anything in it changed since last cycle?</li>
+    <li>Pull last cycle's modeler state. What did we ship? What did we hedge on that's now worth revisiting?</li>
+    <li>Confirm 6-week runway. If you can't get from kickoff to Saturday in 6 weeks, the cycle gets messy.</li>
+    <li>Ben (or current VCFO) has bandwidth for a 90-min affordability session in week 1.</li>
+  </ol>
+</section>
+
+<!-- ===== SECTION 2: THE PHASES ===== -->
+<section id="phases">
+  <h2>The 6 phases</h2>
+  <p class="sub">Each phase has a target window (relative to effective Saturday = T+0). Enter your target date above and the absolute dates fill in. Owners run their checklists. Cameron or Paul confirms phase exit before the next one starts.</p>
+
+  <!-- PHASE 1 -->
+  <details class="phase" data-phase="1">
+    <summary class="phase-head" tabindex="0">
+      <span class="phase-num">1</span>
+      <span class="phase-meta">
+        <div class="phase-name">Scenarios + Affordability</div>
+        <div class="phase-detail-row">
+          <span class="owner-chip">Cameron</span>
+          <span class="owner-chip">Paul</span>
+          <span class="owner-chip">VCFO (Ben)</span>
+          <span class="timing-chip">T-42 to T-28</span>
+          <span class="computed-date" data-rel="-42">—</span>
+        </div>
+      </span>
+      <span class="phase-progress" data-progress="1">0/0</span>
+      <span class="phase-toggle">▼</span>
+    </summary>
+    <div class="phase-body">
+      <p>Build 2-3 scenarios in the modeler. Stress-test each against the budget. End of phase: one scenario is locked as the "go-to-BMs" version, with affordability validated by VCFO.</p>
+      <ul class="checklist" data-phase-id="1">
+        <li><input type="checkbox" id="p1-1"><label for="p1-1">Open modeler, clone last cycle's state, save as new cycle baseline</label></li>
+        <li><input type="checkbox" id="p1-2"><label for="p1-2">Draft Scenario A (recommended), B (alternative), C (baseline / no-change)</label></li>
+        <li><input type="checkbox" id="p1-3"><label for="p1-3">Review with Paul — confirm scenario set captures the real strategic options</label></li>
+        <li><input type="checkbox" id="p1-4"><label for="p1-4">Schedule VCFO affordability session (90 min, Cameron + Paul + VCFO)</label></li>
+        <li><input type="checkbox" id="p1-5"><label for="p1-5">VCFO stress-test: comp-to-AGM ≤16% ceiling? Cash position bottom-of-quarter remains healthy?</label></li>
+        <li><input type="checkbox" id="p1-6"><label for="p1-6">Mover comp ÷ revenue lands under 40% post-raise</label></li>
+        <li><input type="checkbox" id="p1-7"><label for="p1-7">Lock primary scenario. Document the call in modeler decisions log</label></li>
+      </ul>
+      <div class="nudge"><b>Reference numbers (May 2026):</b> ~$586K annual added cost, 37.8% mover-comp-to-revenue, 13.4% comp-to-AGM. Variable burden 13.2%. Avg annual hours ~1600 for PT mix.</div>
+    </div>
+  </details>
+
+  <!-- PHASE 2 -->
+  <details class="phase" data-phase="2">
+    <summary class="phase-head" tabindex="0">
+      <span class="phase-num">2</span>
+      <span class="phase-meta">
+        <div class="phase-name">BM Pressure Tests</div>
+        <div class="phase-detail-row">
+          <span class="owner-chip">Brian</span>
+          <span class="owner-chip">Mike</span>
+          <span class="timing-chip">T-28 to T-21</span>
+          <span class="computed-date" data-rel="-28">—</span>
+        </div>
+      </span>
+      <span class="phase-progress" data-progress="2">0/0</span>
+      <span class="phase-toggle">▼</span>
+    </summary>
+    <div class="phase-body">
+      <p>Run the locked scenario past frontline BMs. Two sessions — Brian convenes CTXH, Mike convenes DFWT. Look for: structural objections, recruiting reality checks, named-individual implications. Refine until both regions buy in.</p>
+      <ul class="checklist" data-phase-id="2">
+        <li><input type="checkbox" id="p2-1"><label for="p2-1">Brian schedules CTXH BM session (Calvin, Chris, Frank, Dustin, Sergio)</label></li>
+        <li><input type="checkbox" id="p2-2"><label for="p2-2">Mike schedules DFWT BM session (Beattie, Grant, Khevan, Jack + Tampa BM)</label></li>
+        <li><input type="checkbox" id="p2-3"><label for="p2-3">Pre-share: 1-pager summary of scenario + ladder + headline numbers (NOT the modeler URL)</label></li>
+        <li><input type="checkbox" id="p2-4"><label for="p2-4">Walk through ladder + promotion gates + variable structure</label></li>
+        <li><input type="checkbox" id="p2-5"><label for="p2-5">Surface frontline objections — capture verbatim, not summarized</label></li>
+        <li><input type="checkbox" id="p2-6"><label for="p2-6">Test recruiting impact — "would this have closed the candidate you lost last week?"</label></li>
+        <li><input type="checkbox" id="p2-7"><label for="p2-7">Refine scenario in modeler based on BM input; lock v2</label></li>
+        <li><input type="checkbox" id="p2-8"><label for="p2-8">Confirm regional differential (if any) — tiered markets locked?</label></li>
+      </ul>
+      <div class="pitfall"><b>Pitfall:</b> Don't share the modeler URL with BMs. Share a clean summary. The modeler exposes math that creates noise in a pressure-test.</div>
+    </div>
+  </details>
+
+  <!-- PHASE 3 -->
+  <details class="phase" data-phase="3">
+    <summary class="phase-head" tabindex="0">
+      <span class="phase-num">3</span>
+      <span class="phase-meta">
+        <div class="phase-name">Roundtable Alignment</div>
+        <div class="phase-detail-row">
+          <span class="owner-chip">Cameron</span>
+          <span class="timing-chip">T-21 to T-14</span>
+          <span class="computed-date" data-rel="-21">—</span>
+        </div>
+      </span>
+      <span class="phase-progress" data-progress="3">0/0</span>
+      <span class="phase-toggle">▼</span>
+    </summary>
+    <div class="phase-body">
+      <p>Present locked scenario to Roundtable. Goal: capture all leadership-level objections, lock the comms framing, assign rollout ownership. End of phase: written go-decision with each leader's named action items.</p>
+      <ul class="checklist" data-phase-id="3">
+        <li><input type="checkbox" id="p3-1"><label for="p3-1">Add to Roundtable agenda (block 30-45 min)</label></li>
+        <li><input type="checkbox" id="p3-2"><label for="p3-2">Pre-read sent 48hr ahead — single doc, headline numbers, ladder, examples</label></li>
+        <li><input type="checkbox" id="p3-3"><label for="p3-3">Walk through. Capture dissent. Don't paper over disagreements.</label></li>
+        <li><input type="checkbox" id="p3-4"><label for="p3-4">Lock comms framing — "what's in it for movers" angle</label></li>
+        <li><input type="checkbox" id="p3-5"><label for="p3-5">Assign rollout ownership across Anne (ClearCo/Rippling), Paul (HOF 1:1s), Matisen (EMMA matrix), Brian/Mike (BM brief)</label></li>
+        <li><input type="checkbox" id="p3-6"><label for="p3-6">Sky Board execution sprint pulse created with each leader tagged</label></li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- PHASE 4 -->
+  <details class="phase" data-phase="4">
+    <summary class="phase-head" tabindex="0">
+      <span class="phase-num">4</span>
+      <span class="phase-meta">
+        <div class="phase-name">Operational Rails Prep</div>
+        <div class="phase-detail-row">
+          <span class="owner-chip">Anne</span>
+          <span class="owner-chip">Paul</span>
+          <span class="owner-chip">Matisen</span>
+          <span class="owner-chip">Cameron</span>
+          <span class="timing-chip">T-14 to T-3</span>
+          <span class="computed-date" data-rel="-14">—</span>
+        </div>
+      </span>
+      <span class="phase-progress" data-progress="4">0/0</span>
+      <span class="phase-toggle">▼</span>
+    </summary>
+    <div class="phase-body">
+      <p>The unglamorous middle. Every system that touches mover pay gets updated. Announcement pages built. BM training packets prepped. HOF grandfathered cohort 1:1s scheduled. By end of phase, everything is queued for Saturday flip.</p>
+      <ul class="checklist" data-phase-id="4">
+        <li><input type="checkbox" id="p4-1"><label for="p4-1">Anne: ClearCo job templates updated with new pay (cascades to all assigned reqs)</label></li>
+        <li><input type="checkbox" id="p4-2"><label for="p4-2">Anne: Rippling pay rates queued for Saturday effective date</label></li>
+        <li><input type="checkbox" id="p4-3"><label for="p4-3">Anne: Phone interview script updated with new pay confirmation language</label></li>
+        <li><input type="checkbox" id="p4-4"><label for="p4-4">Anne: In-person interview Canva handout refreshed</label></li>
+        <li><input type="checkbox" id="p4-5"><label for="p4-5">Cameron: Mover pay announcement HTMLs built (Premium + Standard tiers if applicable)</label></li>
+        <li><input type="checkbox" id="p4-6"><label for="p4-6">Cameron: Deploy announcement pages to GitHub Pages with noindex/nofollow</label></li>
+        <li><input type="checkbox" id="p4-7"><label for="p4-7">Cameron: Audit pass on announcement pages (tier $ offset, ladder cadence, calculator math, responsive)</label></li>
+        <li><input type="checkbox" id="p4-8"><label for="p4-8">Paul: List HOF grandfathered cohort + schedule 1:1s for T+0 to T+7</label></li>
+        <li><input type="checkbox" id="p4-9"><label for="p4-9">Matisen: Performance matrix updates in EMMA / Rippling (variable rates by tier)</label></li>
+        <li><input type="checkbox" id="p4-10"><label for="p4-10">Brian/Mike: BM brief prepared with manager FAQ (different from mover FAQ)</label></li>
+        <li><input type="checkbox" id="p4-11"><label for="p4-11">Slack announcement drafts written (one per market tier if differential)</label></li>
+      </ul>
+      <div class="pitfall"><b>Pitfall:</b> Tier $ offset math. If you have a Premium / Standard split, every position base in Standard must reconcile to exactly $X/hr below Premium. Audit the announcement pages, the modeler, the JS data, and the calculator gate text — all four have to agree.</div>
+      <div class="pitfall"><b>Pitfall:</b> The pay ladder appears in three places on the announcement page — the stair-step display, the JS POSITIONS data, and the calculator's "promotion gate" output. If you edit one, audit all three.</div>
+    </div>
+  </details>
+
+  <!-- PHASE 5 -->
+  <details class="phase" data-phase="5">
+    <summary class="phase-head" tabindex="0">
+      <span class="phase-num">5</span>
+      <span class="phase-meta">
+        <div class="phase-name">Saturday → Monday Choreography</div>
+        <div class="phase-detail-row">
+          <span class="owner-chip">Anne</span>
+          <span class="owner-chip">Cameron</span>
+          <span class="timing-chip">T-1 to T+0</span>
+          <span class="computed-date" data-rel="-1">—</span>
+        </div>
+      </span>
+      <span class="phase-progress" data-progress="5">0/0</span>
+      <span class="phase-toggle">▼</span>
+    </summary>
+    <div class="phase-body">
+      <p>The actual flip. Pay-period boundary is Saturday — rates change with the new period. Job postings get taken down + reposted Monday. Internal comms cascade Monday AM when BMs are on-site to handle questions.</p>
+      <ul class="checklist" data-phase-id="5">
+        <li><input type="checkbox" id="p5-1"><label for="p5-1"><b>Saturday (T+0):</b> Anne confirms Rippling rates flipped at start of new pay period</label></li>
+        <li><input type="checkbox" id="p5-2"><label for="p5-2"><b>Saturday-Sunday:</b> Anne pulls down old Indeed postings</label></li>
+        <li><input type="checkbox" id="p5-3"><label for="p5-3"><b>Monday AM:</b> Cameron — leadership Slack pre-brief (15-min heads-up, 30 min before BM brief)</label></li>
+        <li><input type="checkbox" id="p5-4"><label for="p5-4"><b>Monday AM:</b> Brian/Mike — BM brief with manager FAQ (45 min, includes Q&A)</label></li>
+        <li><input type="checkbox" id="p5-5"><label for="p5-5"><b>Monday mid-day:</b> Mover Slack announcement posted with link to HTML announcement page</label></li>
+        <li><input type="checkbox" id="p5-6"><label for="p5-6"><b>Monday:</b> Anne reposts all jobs with new rates (Indeed via ClearCo)</label></li>
+        <li><input type="checkbox" id="p5-7"><label for="p5-7"><b>Monday EOD:</b> Pulse on Cam's Board marking the rollout shipped; recap update with both announcement URLs</label></li>
+      </ul>
+      <div class="pitfall"><b>Pitfall:</b> Rate changes ALWAYS land on a Saturday pay-period boundary. Never mid-period. Saturday = new period kickoff.</div>
+      <div class="pitfall"><b>Pitfall:</b> Monday <code>create_update</code> body must NOT be CDATA-wrapped — renders blank. HTML body is fine raw. Use <code>mentionsList</code> parameter for @mentions, never HTML links.</div>
+    </div>
+  </details>
+
+  <!-- PHASE 6 -->
+  <details class="phase" data-phase="6">
+    <summary class="phase-head" tabindex="0">
+      <span class="phase-num">6</span>
+      <span class="phase-meta">
+        <div class="phase-name">Post-Ship Reinforcement</div>
+        <div class="phase-detail-row">
+          <span class="owner-chip">Paul</span>
+          <span class="owner-chip">Anne</span>
+          <span class="owner-chip">BMs</span>
+          <span class="timing-chip">T+1 to T+21</span>
+          <span class="computed-date" data-rel="+1">—</span>
+        </div>
+      </span>
+      <span class="phase-progress" data-progress="6">0/0</span>
+      <span class="phase-toggle">▼</span>
+    </summary>
+    <div class="phase-body">
+      <p>The first 3 weeks after ship are when reality hits. Movers ask real questions. HOF grandfathered cohort gets handled directly. FAQ gets updated from real input. Performance matrix needs first-cycle validation.</p>
+      <ul class="checklist" data-phase-id="6">
+        <li><input type="checkbox" id="p6-1"><label for="p6-1"><b>Week 1:</b> Paul runs HOF grandfathered 1:1s (all 10 conversations)</label></li>
+        <li><input type="checkbox" id="p6-2"><label for="p6-2"><b>Week 1:</b> BMs collect mover questions in real-time, post to a shared channel</label></li>
+        <li><input type="checkbox" id="p6-3"><label for="p6-3"><b>Week 2:</b> Cameron updates announcement FAQ section with real questions that surfaced</label></li>
+        <li><input type="checkbox" id="p6-4"><label for="p6-4"><b>Week 2:</b> Matisen validates first paycheck under new structure (anomalies, edge cases)</label></li>
+        <li><input type="checkbox" id="p6-5"><label for="p6-5"><b>Week 3:</b> Spot-check ClearCo job posting performance — applicant flow improvement vs. baseline?</label></li>
+        <li><input type="checkbox" id="p6-6"><label for="p6-6"><b>Week 3:</b> Reverse retro — what went well? What broke? Update this playbook.</label></li>
+      </ul>
+    </div>
+  </details>
+
+</section>
+
+<!-- ===== SECTION 3: ROLES ===== -->
+<section id="roles">
+  <h2>Roles + ownership</h2>
+  <p class="sub">Who owns what across a cycle.</p>
+  <table class="roles-table">
+    <thead>
+      <tr><th>Role</th><th>Owns</th><th>Phases</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="role">Cameron</td><td>Final decision, philosophy, scenario selection, comms framing, announcement pages, mover Slack announcement</td><td>1, 3, 4, 5</td></tr>
+      <tr><td class="role">Paul</td><td>Financial guardrails, HOF grandfathered 1:1s, manager comp parallel cycle, executive air cover</td><td>1, 4, 6</td></tr>
+      <tr><td class="role">VCFO (Ben)</td><td>Affordability stress-test, comp-to-AGM math, cash position guardrails, COA implications</td><td>1</td></tr>
+      <tr><td class="role">Anne</td><td>ClearCo job updates, Rippling rate flip, Indeed reposts, interview scripts, in-person handout, HR documentation</td><td>4, 5</td></tr>
+      <tr><td class="role">Matisen</td><td>Performance matrix updates in EMMA, variable-pay mechanics, first-paycheck validation</td><td>4, 6</td></tr>
+      <tr><td class="role">Brian</td><td>CTXH BM pressure test, regional rollout, manager FAQ ownership</td><td>2, 5</td></tr>
+      <tr><td class="role">Mike</td><td>DFWT BM pressure test, regional rollout, Tampa-specific edge cases</td><td>2, 5</td></tr>
+      <tr><td class="role">BMs</td><td>Candidate-facing comms, mover questions post-rollout, FAQ inputs from frontline</td><td>5, 6</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== SECTION 4: PITFALLS ===== -->
+<section id="pitfalls">
+  <h2>Pitfalls + lessons learned</h2>
+  <p class="sub">Real ones from prior cycles. Each one we hit at least once. Add to this list every cycle.</p>
+
+  <div class="lesson">
+    <h4>Rate flips on Saturday — always</h4>
+    <p>Pay-period boundary is Saturday. Mid-period rate changes break Rippling, confuse movers, create a paycheck that doesn't reconcile. If you can't land Saturday, push to next Saturday.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>Audit the pay ladder in three places</h4>
+    <p>The ladder appears in the stair-step display, the JS POSITIONS data, and the calculator's "promotion gate" output. They have to agree. Run a general-purpose audit agent against both announcement pages before deploy.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>Tier $ offset math is mechanical — make it explicit</h4>
+    <p>If you have Premium / Standard tiered markets, every position base in Standard = Premium minus exactly $X/hr. Bonus structure, PTO, benefits identical. State the rule in the file as a code comment. Audit the offset against all visible figures + JS data.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>Monday create_update body — no CDATA wrap</h4>
+    <p>Wrapping the body in CDATA renders the update as blank text. Use raw HTML. For @mentions use the <code>mentionsList</code> parameter, never inline HTML links.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>Promise framing on take-home pay</h4>
+    <p>"Take-home" implies after-tax. Use "Weekly gross pay" or "Weekly pay" on calculator outputs. Movers will assume after-tax otherwise and feel underpaid when their first check lands.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>Full-Time Only benefits get an explicit tag</h4>
+    <p>Parental leave, bereavement, health/dental/vision are full-time only at Einstein. Tag them visually on benefits cards. Don't say "(part-time hours count too)" on benefits that don't actually cover PT — it's worse than no information.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>Don't share the modeler URL with BMs in pressure tests</h4>
+    <p>Modeler exposes math + scenarios + open questions that aren't useful frontline noise. Share a clean 1-pager. Cameron + Paul + VCFO + Anne are the only roles with modeler access.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>HOF reframe is harder than the math</h4>
+    <p>If you retire a paid position (e.g. Hall of Fame), the affected cohort hears "you're getting paid less" first. Lead with the grandfathering structure. Schedule 1:1s in the first week. Frame the new state as honor-only ("award", "prestige") not as comp loss.</p>
+  </div>
+
+  <div class="lesson">
+    <h4>Don't surface the leadership modeler in public pages</h4>
+    <p>The mover announcement pages must NOT link to the modeler. Anyone with the modeler URL sees aggregate comp math, performance distribution, and AGM math. Strip any "Numbers sourced from..." footer references before deploy.</p>
+  </div>
+</section>
+
+<!-- ===== SECTION 5: ARTIFACTS ===== -->
+<section id="artifacts">
+  <h2>Artifacts index</h2>
+  <p class="sub">Where the durable stuff lives. Cycle-specific stuff lives under <code>projects/Mover Compensation Review [date]/</code>.</p>
+  <div class="artifacts">
+    <div class="artifact-card">
+      <h4>Compensation Philosophy V2.1</h4>
+      <p>Why we pay this way. Read first before every cycle.</p>
+      <code>Compensation/philosophy/einstein-compensation-philosophy-v2.html</code><br>
+      <a href="https://einsteinadmin.github.io/einstein-comp-philosophy-276e8bb16733f7ca/" target="_blank">Live (leadership only)</a>
+    </div>
+    <div class="artifact-card">
+      <h4>Mover Comp Scenario Modeler</h4>
+      <p>The build-and-stress-test tool. Used in Phase 1.</p>
+      <code>Compensation/tools/mover-comp-modeler/index.html</code><br>
+      <a href="https://einsteinadmin.github.io/einstein-mover-comp-c102a0579a4b/" target="_blank">Live (leadership only)</a>
+    </div>
+    <div class="artifact-card">
+      <h4>Job Posting Editor</h4>
+      <p>Indeed-style HTML editor for ClearCo postings. Used in Phase 4.</p>
+      <code>Compensation/tools/job-posting-editor/index.html</code><br>
+      <a href="https://einsteinadmin.github.io/einstein-job-posting-21ebcf06c723/" target="_blank">Live</a>
+    </div>
+    <div class="artifact-card">
+      <h4>Mover Pay Reference (onboarding)</h4>
+      <p>Evergreen "How mover pay works at Einstein" — duplicated from last cycle's announcement, reframed for ongoing onboarding.</p>
+      <code>Compensation/mover-pay-reference/</code>
+    </div>
+    <div class="artifact-card">
+      <h4>Last cycle's announcement (May 2026)</h4>
+      <p>Frozen historical record. Template for next cycle's announcement copy.</p>
+      <code>Compensation/projects/Mover Compensation Review May 2026/</code><br>
+      <a href="https://einsteinadmin.github.io/einstein-mover-pay-premium-7b39415bb3db/" target="_blank">Premium tier (live)</a> · <a href="https://einsteinadmin.github.io/einstein-mover-pay-standard-9e8d7e77d18d/" target="_blank">Standard tier (live)</a>
+    </div>
+    <div class="artifact-card">
+      <h4>This playbook</h4>
+      <p>The doc you're reading. Update after every cycle's reverse retro (Phase 6, last task).</p>
+      <code>Compensation/rollout-playbook/index.html</code><br>
+      <a href="https://einsteinadmin.github.io/einstein-comp-playbook-526555061445/" target="_blank">Live (leadership only)</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 6: OPEN QUESTIONS ===== -->
+<section id="open">
+  <h2>Open questions for next cycle</h2>
+  <p class="sub">Things we hedged on in May 2026 that will need an answer eventually.</p>
+  <ul>
+    <li><b>Excel bonus builder for Part-Time Lead two-bucket clocking.</b> Tool models a single blended rate as approximation; real-world pay is two-buckets (LIT rate on non-lead shifts, Jr. Lead rate + bonus on lead shifts). Matisen variable-isolation feasibility study pending.</li>
+    <li><b>"Lead in Waiting" Phase 2.</b> Comp structure for trained-but-no-opening cohort still unformalized. Currently zeroed in modeler as placeholder.</li>
+    <li><b>BM AGM bonus alignment between Brian + Mike.</b> Both have AGM tied to bonus; framework needs explicit expectation-setting + parity check.</li>
+    <li><b>Hall of Fame reward structure (decoupled from pay).</b> Title program needs revamp — one-time bonus + metric-based selection (not peer vote). Separate from comp cycle but linked.</li>
+    <li><b>"Lead in Training" promotion criteria.</b> Currently "complete handbook + show you can lead a job + solid performance." "Solid performance" needs a more precise definition before next cycle.</li>
+    <li><b>Combined module in modeler still placeholder.</b> Refine when there's a real combined affordability framing to model.</li>
+  </ul>
+</section>
+
+<footer class="bottom">
+  Einstein Moving Company · Compensation Rollout Playbook v1.0 · Last cycle: May 2026
+</footer>
+
+</div>
+
+<!-- ===== JS ===== -->
+<script>
+(function() {
+  'use strict';
+
+  const LS_KEY = 'emc-comp-rollout-playbook-v1';
+  const state = loadState();
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      return raw ? JSON.parse(raw) : { effDate: '', label: '', checks: {} };
+    } catch (e) {
+      return { effDate: '', label: '', checks: {} };
+    }
+  }
+  function saveState() {
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
+
+  // ----- Effective-date input + computed timeline -----
+  const effDateInput = document.getElementById('effDate');
+  const labelInput = document.getElementById('cycleLabel');
+  effDateInput.value = state.effDate || '';
+  labelInput.value = state.label || '';
+
+  function computeDates() {
+    const eff = state.effDate ? new Date(state.effDate + 'T00:00:00') : null;
+    document.querySelectorAll('.computed-date').forEach(el => {
+      if (!eff) { el.textContent = '—'; return; }
+      const rel = parseInt(el.dataset.rel, 10);
+      const d = new Date(eff);
+      d.setDate(d.getDate() + rel);
+      const fmt = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      el.textContent = '→ ' + fmt;
+    });
+  }
+  computeDates();
+
+  document.getElementById('saveCycle').addEventListener('click', () => {
+    state.effDate = effDateInput.value;
+    state.label = labelInput.value;
+    saveState();
+    computeDates();
+  });
+
+  document.getElementById('resetCycle').addEventListener('click', () => {
+    if (!confirm('Reset all checklists for this playbook? This clears completion state but keeps the effective date + label.')) return;
+    state.checks = {};
+    saveState();
+    document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.closest('li').classList.remove('done');
+    });
+    updateAllProgress();
+  });
+
+  // ----- Checklist persistence -----
+  document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => {
+    if (state.checks[cb.id]) { cb.checked = true; cb.closest('li').classList.add('done'); }
+    cb.addEventListener('change', () => {
+      state.checks[cb.id] = cb.checked;
+      cb.closest('li').classList.toggle('done', cb.checked);
+      saveState();
+      updateAllProgress();
+    });
+  });
+
+  function updateAllProgress() {
+    let total = 0, done = 0;
+    document.querySelectorAll('.phase').forEach(phase => {
+      const id = phase.dataset.phase;
+      const checks = phase.querySelectorAll('.checklist input[type="checkbox"]');
+      const doneCount = phase.querySelectorAll('.checklist input[type="checkbox"]:checked').length;
+      total += checks.length;
+      done += doneCount;
+      const indicator = phase.querySelector(`[data-progress="${id}"]`);
+      if (indicator) indicator.textContent = doneCount + '/' + checks.length;
+    });
+    document.getElementById('progressText').textContent = done + ' / ' + total + ' tasks complete';
+    document.getElementById('progressFill').style.width = total ? ((done / total) * 100) + '%' : '0%';
+  }
+  updateAllProgress();
+
+  // ----- Phase toggle via summary click handled by <details> natively -----
+  // ----- Smooth-scroll nav -----
+  document.querySelectorAll('nav.toc a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>
